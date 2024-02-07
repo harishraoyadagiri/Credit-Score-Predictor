@@ -1,0 +1,158 @@
+---
+title: "HW2_NY_TESTING"
+author: "Navya Yadagiri"
+date: "2/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(tidyverse)
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+
+library(ggplot2)
+library(rpart)
+library(readxl)
+library(rpart.plot)
+library(GGally)
+library(Hmisc)
+library(modeldata)
+library(C50)
+
+
+German_Credit<- read_xls("German_Credit.xls")
+data <- German_Credit
+
+data <-data[-1]
+head(data)
+summary(data)
+
+
+
+#So, the last variable is RESPONSE, that symbloizes whether its a good rating or not 0 - No and 1- Yes
+#There are in total 1000 instances in the german credit data
+nrow(German_Credit)
+
+
+
+
+#Printing all the min and max values in each observation
+summary(German_Credit)
+
+
+
+#Get the structure of the dataframe
+str(German_Credit)
+
+
+
+#Get the datatype for each of the colnames
+#All the colnames are numeric
+sapply(German_Credit, class)
+
+#The variables of the dataset will be referred by their column name
+attach(German_Credit)
+
+# All the colnames of the dataset are double, whatever are categorical we have to change it to factor using as.factor
+glimpse(German_Credit)
+
+#From the reference from the data dictionary all the categorical variables are changed to factor
+```
+
+
+
+
+```{r}
+#Creating a new data frame from the German Credits datasetfor target varial Response
+
+
+
+GC_DATA <- German_Credit %>% mutate(RESPONSE_TAEGET=as.factor(as.factor(ifelse(German_Credit$RESPONSE >0,"Good","Bad"))))
+view(GC_DATA)
+```
+
+
+
+```{r}
+#Now there is no need of Response variable which is our Target and also removing the first index column
+
+
+
+GC_DATA$RESPONSE<-NULL
+GC_DATA$`OBS#`<-NULL
+View(GC_DATA)
+```
+
+
+
+```{r}
+#Now creating a new dataframes to calculate proportion between Data with good credit and bad credit records based on the TARGET variable "Response"!
+
+
+
+Good_credit <- filter(GC_DATA, RESPONSE_TAEGET == "Good")
+
+
+
+Bad_credit <- filter(GC_DATA, RESPONSE_TAEGET == "Bad")
+
+
+
+#Using nrow function as data will give error as data frame is not equally spaced
+Proportion<-nrow(Good_credit)/nrow(Bad_credit)
+Proportion
+
+
+
+```
+```{r}
+#DATA WRANGLING
+
+
+
+# The sum is 0, so there are no NA values
+sum(is.na.data.frame(GC_DATA))
+
+
+
+#Converting double variables to factors
+
+
+
+names <- c(1,3:9,11:21,23:27,29,30)
+GC_DATA[,names] <- lapply(GC_DATA[,names] , factor)
+str(GC_DATA)
+
+
+
+set.seed(134) #to get consistent data everytime one runs the model
+indx <- sample(2, nrow (GC_DATA), replace=TRUE, prob = c(0.8,0.2))
+train <- GC_DATA[indx == 1, ]
+nrow(train)
+test <- GC_DATA[indx == 2, ]
+nrow(test)
+sum(is.na(test$RESPONSE_TAEGET))
+
+myFormula <- RESPONSE_TAEGET~.
+
+
+mytree <- rpart(myFormula, data = train,method="class")
+
+rpart.plot(mytree)
+
+pred_train <- predict(mytree, data=train, type = "class")
+
+mean(train$RESPONSE_TAEGET != pred_train) 
+
+pred_test <- predict(mytree, newd_data=test, type = "class")
+
+pred_test <- predict(mytree, data=test, type = "class", parms=list(split="information"))
+confu_matr2 <- table(test$RESPONSE_TAEGET, pred_test)
+```
+

@@ -1,0 +1,347 @@
+---
+title: "IDS_572_HW2_Navya_Yadagiri"
+author: "Navya Yadagiri"
+date: "2/19/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### **Objective** The German Credit data set contains observations on 30 variables for 1000 past applicants for credit. Each applicant was rated as “good credit” or “bad credit”. New applicants for credit can also be evaluated on these 30 “predictor” variables. We want to develop a credit scoring rule that can be used to determine if a new applicant is a good credit risk or a bad credit risk, based on values for one or more of the predictor variables. 
+
+
+
+##### Installing necessary packages
+```{r}
+library("dplyr")
+# install.packages("readxl")
+library("readxl")
+#install.packages("ggplot2")
+library("ggplot2")
+#install.packages("devtools")
+library(devtools)
+#install.packages("easyGplot2")
+```
+##### Loading the German Data set 
+```{r}
+german_credit_data <- read_excel("German Credit.xls")
+
+head(german_credit_data, 50)
+
+# Checking what all columns are there in the data set
+# There are around 31 observations with the first variable as OBS# - that is like an index number
+colnames(german_credit_data)
+
+glimpse(german_credit_data)
+#So, the last variable is RESPONSE, which is the target variable signifies - - Bad and 1-Good
+#There are in total 1000 instances in the german credit data
+nrow(german_credit_data)
+
+#Printing all the min and max values in each attribute of the data set 
+summary(german_credit_data)
+
+#Get the structure of the dataframe 
+str(german_credit_data)
+
+#Get the datatype for each of the colnames
+#All the colnames are numeric 
+sapply(german_credit_data, class)
+
+
+#The variables of the dataset will be referred by their column name
+attach(german_credit_data)
+
+
+# All the colnames of the dataset are double, whatever are categorical we have to change it to factor using as.factor  
+glimpse(german_credit_data)
+
+
+```
+
+##### Changing few attributes from numeric to categorical
+```{r}
+
+german_credit_data$RESPONSE <-  as.factor(ifelse(RESPONSE > 0, "Good","Bad"))
+
+colnumbers <- c(1:2,4:10, 12:13,15:22, 24:28,30:32)
+
+View(german_credit_data)
+
+#Now, check the variable data type of the dataset
+glimpse(german_credit_data)
+
+numerical_colnumbers <- c(3, 11,14, 23,27, 29)
+```
+
+
+
+###### Removing the First column observation number
+```{r}
+german_credit_data <- german_credit_data[,-1]
+
+glimpse(german_credit_data)
+#There are around 6 variables that are numerical
+```
+
+
+```{r}
+# The sum is 0, so there are no NA values
+sum(is.na(german_credit_data))
+```
+```{r}
+#Checking if there are any outliers 
+#For all the categorical variables it will tell the number of 0 and 1 values and for numerical data what the min, average values are
+summary(german_credit_data)
+```
+
+
+
+####The number of good credits compared to bad are greater, and the ratio is almost 700/300
+```{r}
+
+ggplot(german_credit_data , aes(RESPONSE)) + geom_bar(aes(fill = RESPONSE),position = "dodge") 
+```
+
+
+###### EDA for continuous variables x       
+###### Lets observe the age distribution 
+```{r}
+#Displaying the age distribution
+age_table <- table(AGE, RESPONSE)
+barplot(age_table,
+        main = "Grouped barchart",
+        xlab = "Age", ylab = "Count",
+        col = c("darkgrey", "darkblue"),
+        legend.text = row.names(age_table),
+        beside = TRUE) # Grouped bars
+
+
+#Displaying the age over the target variable - The graph clearly displays the ages between 22-37 observe relatively greater bad credits and also do have greater good credits 
+
+##The ages between 43 - 75 have a higher good credit.
+ggplot(german_credit_data, aes(x = factor(AGE), fill = RESPONSE)) +
+    geom_bar(position = position_dodge()) +
+    theme_classic()
+
+
+ggplot(german_credit_data,mapping = aes(x= RESPONSE, y=DURATION))+ geom_boxplot(fill = "#FF0000") + theme_minimal()
+
+
+
+ggplot(german_credit_data) + aes(x = "", y = AMOUNT ) + geom_boxplot(fill = "#FF0000") + theme_minimal()
+
+
+ggplot(german_credit_data, aes(x = AMOUNT, fill = RESPONSE)) +
+    geom_bar(position = position_dodge())
+
+
+amount_table <- table(AMOUNT, RESPONSE)
+barplot(amount_table,
+        main = "Grouped barchart",
+        xlab = "Amount", ylab = "Count",
+        col = c("darkgrey", "darkblue"),
+        beside = TRUE) # Grouped bars
+
+
+ggplot(german_credit_data, aes(x=AMOUNT, y=RESPONSE)) +
+  geom_line()
+
+ggplot(german_credit_data,mapping = aes(x= RESPONSE, y=AMOUNT))+ geom_boxplot(fill = "#FF0000") + theme_minimal()
+
+
+
+ggplot(german_credit_data, aes(factor(INSTALL_RATE))) + 
+  geom_bar(aes(fill = RESPONSE), position = "dodge") + xlab("Installment Rates")
+
+```
+
+##### EDA for Categorical variables
+##### The following are the variables that we will be checking
+
+* Checking Account Status
+
+
+```{r}
+
+```
+
+
+######Purpose of Credit 
+
+##### There are 5 variables that tell us about the purpose of the credit
+
+
+
+#### Purpose of Credit : NEW_CAR
+```{r}
+
+#install.packages("gridExtra")
+library(gridExtra)
+
+
+plot1 <- ggplot(german_credit_data , aes((NEW_CAR))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("NEW CAR")
+plot2 <- ggplot(german_credit_data , aes((USED_CAR))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("USED CAR")
+plot3 <-  ggplot(german_credit_data, aes((`RADIO/TV`))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("RADIO/TV")
+plot4 <- ggplot(german_credit_data , aes((EDUCATION))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("EDUCATION")
+plot5 <- ggplot(german_credit_data , aes((RETRAINING))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("RETRAINING")
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, ncol = 2, nrow = 3)
+```
+
+
+
+#### Box Plot for EXISTING CREDITS AT THE BANK
+
+#Mostly have to drop this colum will not require it does'nt say much about the bad credit
+#As you can see idealy as the number of credits increase they should get a bad rating but its not happening so this column is not much of a relevance
+```{r}
+
+boxplot(NUM_CREDITS~RESPONSE,
+data=german_credit_data,
+xlab="COUNT ",
+ylab="NUM OF EXISING CREDIT ACCOUNTS",
+col="BLUE",
+border="red" )
+
+
+
+ggplot(german_credit_data , aes((NUM_CREDITS))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("NUM OF EXISTING CREDIT ACCOUNTS")
+```
+
+####NUMBER OF PEOPLE RELIABLE
+#### Even this variable can be removed, because it doesnt add much of any extra information, both the good and bad rating have min 1 and max 2 dependents, and also the number of people for 1 dependent might be more than than of 2 dependents but, the ratio is same for good/bad credit rating so NOT RELEVANT
+```{r}
+
+boxplot(NUM_DEPENDENTS~RESPONSE,
+data=german_credit_data,
+xlab="COUNT ",
+ylab="NUM OF DEPENDENTS",
+col="BLUE",
+border="red" )
+
+
+
+ggplot(german_credit_data , aes((NUM_DEPENDENTS))) + geom_bar(aes(fill = RESPONSE),position = "dodge") + xlab("NUM OF DEPENDENTS")
+```
+
+
+##### CREDIT HISTORY 
+* Significance of Each value
+  + 0: no credits taken 
+  + 1:all credits at this bank paid back duly 
+  + 2:existing credits paid back duly till now 
+  + 3:delay in paying off in the past 
+  + 4:critical account
+
+##### As we can see the number of accounts that have paid back until Jull are more and also signify good credit, and we similary a greater number of accounts with critical accounts of more than 200 
+```{r}
+
+ggplot(german_credit_data,  aes(x = HISTORY, 
+           fill = RESPONSE)) + 
+  geom_bar(position = "stack")
+```
+
+####So, based on the above analysis, we will remove few columns 
+All attributes correlation matrix
+```{r}
+#install.packages("PerformanceAnalytics")
+#install.packages("corrplot")
+library(corrplot)
+library("PerformanceAnalytics")
+
+
+corrplot(german_credit_data, method = "color")
+upadated_german_Corr_Data <- german_credit_data[,c(2,3,5,6,11,12,13,14,20,22,23,28,31,32)]
+
+
+#Getting an error because amount is numeric, duration
+class(upadated_german_Corr_Data[1,])
+diff(upadated_german_Corr_Data[1,])
+
+corrplot(as.matrix(corr_matric),is.corr = FALSE, method = "color")
+
+```
+
+
+
+#### Decision Tree Building 80/20
+```{r}
+#
+
+set.seed(1234)
+ind <- sample(2, nrow(german_credit_data), replace = TRUE, prob = c(0.8,0.2))
+
+
+
+german_credit_data_train <- german_credit_data[ind == 1,]
+german_credit_data_test <- german_credit_data[ind == 2,]
+
+
+
+nrow(german_credit_data_train)
+nrow(german_credit_data_test)
+
+library(rpart)
+library(rpart.plot)
+
+box.palette = "gray"
+
+
+myFormula = RESPONSE ~ .
+
+myTree <- rpart(RESPONSE ~ ., data = german_credit_data_train, cp = 0.01)
+myTree <- rpart(RESPONSE ~ ., data = german_credit_data_train, cp = 0.02)
+
+print(myTree)
+
+
+rpart.plot(myTree)
+
+predicted_german_data_train<- predict(myTree, data = german_credit_data_train)
+
+
+mean(german_credit_data_train$RESPONSE != predicted_german_data_train)
+```
+
+decision tree - 70 30
+```{r}
+
+set.seed(1234)
+ind1 <- sample(2, nrow(german_credit_data), replace = TRUE, prob = c(0.7,0.3))
+
+
+
+german_credit_data_train <- german_credit_data[ind1 == 1,]
+german_credit_data_test <- german_credit_data[ind1 == 2,]
+
+
+
+nrow(german_credit_data_train)
+nrow(german_credit_data_test)
+
+library(rpart)
+library(rpart.plot)
+
+box.palette = "gray"
+
+
+myFormula = RESPONSE ~ .
+
+myTree <- rpart(RESPONSE ~ ., data = german_credit_data_train, cp = 0.01)
+myTree <- rpart(RESPONSE ~ ., data = german_credit_data_train, cp = 0.02)
+
+print(myTree)
+
+
+rpart.plot(myTree)
+
+predicted_german_data_train<- predict(myTree, data = german_credit_data_train)
+
+
+mean(german_credit_data_train$RESPONSE != predicted_german_data_train)
+
+```
+
+

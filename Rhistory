@@ -1,0 +1,65 @@
+knitr::opts_chunk$set(echo = TRUE)
+# install.packages("readxl")
+library("readxl")
+german_credit_data <- read_excel("German Credit.xls")
+#Loading the Packages
+#install.packages("rpart.plot")
+#install.packages("Hmisc")
+#install.packages("modeldata")
+library(tidyverse)
+library(ggplot2)
+library(rpart)
+library(readxl)
+library(rpart.plot)
+library(GGally)
+#Loading the Packages
+#install.packages("rpart.plot")
+#install.packages("Hmisc")
+#install.packages("modeldata")
+install.packages("GGally")
+library(GGally)
+library(GGally)
+library(Hmisc)
+#Loading the Packages
+#install.packages("rpart.plot")
+install.packages("Hmisc")
+library(Hmisc)
+library(Hmisc)
+library(modeldata)
+install.packages("modeldata")
+library(modeldata)
+library(C50)
+install.packages("C50")
+library(C50)
+#importing the German Credit data
+German_Credit <- read_excel("German Credit.xls")
+german_credit_data <- read_excel("German Credit.xls")
+setwd("C:/Users/nyadag2/OneDrive - University of Illinois Chicago/Desktop/Spring 2022/IDS 572 Data Mining/HW 2")
+#importing the German Credit data
+german_credit_data <- read_excel("German Credit.xls")
+#importing the German Credit data
+german_credit_data <- read_excel("German Credit.xls")
+German_Credit <- read_excel("German Credit.xls")
+German_Credit <- read_excel("German Credit.xls")
+setwd("C:/Users/nyadag2/OneDrive - University of Illinois Chicago/Desktop/Spring 2022/IDS 572 Data Mining/HW 2")
+library("readxl")
+#importing the German Credit data
+german_credit_data <- read_excel("German Credit.xls")
+View(German_Credit)
+library("readxl")
+cd
+cd()
+?cd
+getwd()
+#importing the German Credit data
+german_credit_data <- read_excel("German Credit.xls")
+#importing the German Credit data
+German_Credit <- read_xls("German Credit.xls")
+#importing the German Credit data
+German_Credit <- read_xls("/German Credit.xls")
+#importing the German Credit data
+setwd("C:/Users/nyadag2/OneDrive - University of Illinois Chicago/Desktop/Spring 2022/IDS 572 Data Mining/HW 2")
+View(German_Credit)
+German_Credit <- read_xls("German Credit.xls")
+German_Credit <- read_excel("German Credit.xls")
+getwd()
